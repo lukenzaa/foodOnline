@@ -4,4 +4,5 @@ from .models import User
 from django.contrib import messages
 
 
-# Create your views here.
+def vprofile(request):
+    return render(request, 'vendor/vprofile.html')
