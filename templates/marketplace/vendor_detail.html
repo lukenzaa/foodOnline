@@ -2,7 +2,75 @@
 {% load static %}
 
 {% block content %}
+<script>
+    $(function() {
+    // add to cart
+    $('.add_to_cart').on('click', function(e) {
+        e.preventDefault();
+        
+        food_id = $(this).attr('data-id');
+        url = $(this).attr('data-url');
 
+       
+        
+        $.ajax({
+            type: 'GET',
+            url: url,
+            success: function(response){
+                console.log(response)
+                if(response.status =='login_required'){
+                    swal(response.message, '', 'info').then(function(){
+                        window.location = '/login';
+                    })
+                }if (response.status == 'Failed'){
+                    swal(response.message, '', 'error')
+                }else{
+                    $('#cart_counter').html(response.cart_counter['cart_count'])
+                    $('#qty-'+food_id).html(response.qty)
+                } 
+
+            }
+        })
+    });
+
+    // place the cart item quantity on load
+    $('.item_qty').each(function(){
+        let the_id = $(this).attr('id');
+        let qty = $(this).attr('data-qty');
+        $('#'+the_id).html(qty)
+    })
+
+    // decrease cart
+    $('.decrease_cart').on('click', function(e) {
+        e.preventDefault();
+        
+        food_id = $(this).attr('data-id');
+        url = $(this).attr('data-url');
+
+        
+        
+        $.ajax({
+            type: 'GET',
+            url: url,
+            success: function(response){
+                console.log(response)
+                if(response.status =='login_required'){
+                    swal(response.message, '', 'info').then(function(){
+                        window.location = '/login';
+                    })
+                }else if(response.status =='Failed'){
+                    swal(response.message, '', 'error')
+                }else{
+                    $('#cart_counter').html(response.cart_counter['cart_count'])
+                    $('#qty-'+food_id).html(response.qty)
+                }
+                 
+
+            }
+        })
+    });
+});
+</script>
 <!-- Main Section Start -->
 <div class="main-section">
     <div class="page-section restaurant-detail-image-section" style=" background: url({% if vendor.user_profile.cover_photo %} {{vendor.user_profile.cover_photo.url}} {% else %} {% static 'images/default-cover.png' %} {% endif %} ) no-repeat scroll 0 0 / cover;">
@@ -113,8 +181,11 @@
                                                 </div>
                                                 <div class="price-holder">
                                                     <span class="price">£{{ food.price }}</span>
-                                                    <a href="#" class="restaurant-add-menu-btn"><i class="icon-plus4 text-color"></i></a>
-                                                    <span id="add-menu-loader-10"></span>
+
+                                                    <a href="#" class="decrease_cart" data-id="{{ food.id }}" data-url="{% url 'decrease_cart' food.id %}" style="margin-right: 28px;"><i class="icon-minus text-color"></i></a>
+                                                    <label  id="qty-{{food.id}}">0</label>
+                                                    <a href="#" class="add_to_cart" data-id="{{ food.id }}" data-url="{% url 'add_to_cart' food.id %}"><i class="icon-plus4 text-color"></i></a>
+                                                    
                                                 </div>
                                             </li> 
                                             {% endfor %}
@@ -122,6 +193,13 @@
                                         {% endfor %}
                                         
                                     </div>
+                                    {% for item in cart_items %}
+
+                                    <span id="qty-{{item.fooditem.id}}" class="item_qty d-none" data-qty="{{ item.quantity }}">{{ item.quantity }}</span>
+
+                                    
+
+                                    {% endfor %}
                                 </div>
                             </div>
                             

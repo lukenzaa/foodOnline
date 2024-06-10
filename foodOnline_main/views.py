@@ -10,3 +10,4 @@ def home(request):
         'vendor': vendor
     } 
     return render(request, 'home.html', context)
+
