@@ -39,11 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'accounts',
     'vendor',
     'menu',
     'marketplace',
     'django.contrib.gis', # GDAL
+    'customers',
 ]
 
 MIDDLEWARE = [
@@ -73,6 +75,7 @@ TEMPLATES = [
                 #'accounts.context_processors.get_google_api', # For google Api
                 'marketplace.context_processors.get_cart_counter',
                 'marketplace.context_processors.get_cart_amount',
+                'accounts.context_processors.get_user_profile'
             ],
         },
     },
